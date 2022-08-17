@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>函数栈 | PlayDumb</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="BUFFER OVERFLOW 6-The Function StackTHE PROCESSOR’S STACK FRAME LAYOUT处理器的栈帧布局 文章的简单翻译 一个典型的栈帧布局如下所示，在不同的操作系统中它可能会有不同的组织方式： ![栈结构](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="函数栈">
+<meta property="og:url" content="http://example.com/2021/09/21/BO6-%E5%87%BD%E6%95%B0%E6%A0%88/index.html">
+<meta property="og:site_name" content="PlayDumb">
+<meta property="og:description" content="BUFFER OVERFLOW 6-The Function StackTHE PROCESSOR’S STACK FRAME LAYOUT处理器的栈帧布局 文章的简单翻译 一个典型的栈帧布局如下所示，在不同的操作系统中它可能会有不同的组织方式： ![栈结构](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typ">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow2_files/image011.png">
+<meta property="article:published_time" content="2021-09-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-17T02:22:18.574Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow2_files/image011.png">
+  
+    <link rel="alternate" href="/atom.xml" title="PlayDumb" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">PlayDumb</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-BO6-函数栈" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/09/21/BO6-%E5%87%BD%E6%95%B0%E6%A0%88/" class="article-date">
+  <time class="dt-published" datetime="2021-09-20T16:00:00.000Z" itemprop="datePublished">2021-09-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/pwn/">pwn</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      函数栈
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="BUFFER-OVERFLOW-6-The-Function-Stack"><a href="#BUFFER-OVERFLOW-6-The-Function-Stack" class="headerlink" title="BUFFER OVERFLOW 6-The Function Stack"></a>BUFFER OVERFLOW 6-The Function Stack</h1><h2 id="THE-PROCESSOR’S-STACK-FRAME-LAYOUT"><a href="#THE-PROCESSOR’S-STACK-FRAME-LAYOUT" class="headerlink" title="THE PROCESSOR’S STACK FRAME LAYOUT"></a>THE PROCESSOR’S STACK FRAME LAYOUT</h2><p><a target="_blank" rel="noopener" href="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow2a.html">处理器的栈帧布局</a> 文章的简单翻译</p>
+<p>一个典型的栈帧布局如下所示，在不同的操作系统中它可能会有不同的组织方式：</p>
+<p>![栈结构](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-20210917173403227.png)</p>
+<p>​									图1:一个函数调用的典型栈布局结构</p>
+<ul>
+<li><p>函数参数</p>
+</li>
+<li><p>函数的返回地址</p>
+</li>
+<li><p>栈帧指针</p>
+</li>
+<li><p>错误处理框架</p>
+</li>
+<li><p>本地声明的变量</p>
+</li>
+<li><p>缓冲区</p>
+</li>
+<li><p>callee save registers</p>
+</li>
+</ul>
+<p>​        从图中我们可以看出，如果出现了缓冲区溢出漏洞，它就有可能覆盖其他被分配在内存地址高于 Buffer 的变量，比如本地变量、错误处理框架、EBP、返回地址和函数参数。</p>
+<p>​		以 windows\intel 为例，当函数调用发生，数据元素会按照以下的方式存储在栈中：</p>
+<ol>
+<li>在函数被调用之前，函数参数按照从右往左的顺序被 push 入栈中</li>
+<li>函数返回地址通过 x86 的 CALL 指令被放在栈上，其值是 EIP 寄存器当前值</li>
+<li>代表了 EBP 寄存器先前的值的帧指针被放在栈中</li>
+<li>如果函数包括了 try&#x2F;catch 或者其他的错误处理结构，编译器会在栈中含有这些框架信息</li>
+<li>接下来，是声明的本地变量</li>
+<li>之后 BUFFER 为临时变量存储分配空间</li>
+<li>最后，the callee save registers 例如 ESI，EDI 和 EBX 如果在函数执行阶段被任何指针使用了就会被存储。对于 Linux&#x2F;intel 这一步会在第 4 步之后发生。</li>
+</ol>
+<h2 id="THE-PROCESSOR’S-STACK-OPERATION"><a href="#THE-PROCESSOR’S-STACK-OPERATION" class="headerlink" title="THE PROCESSOR’S STACK OPERATION"></a>THE PROCESSOR’S STACK OPERATION</h2><p>​		有两个 CPU 寄存器对栈的功能性很重要，它们保存调用驻留在内存中的数据时所需的信息。在 32 位系统中被称为 ESP and EBP。</p>
+<p>​		ESP(Extend Stack Pointer) 保存了栈顶地址。ESP 可以被直接或间接的修改：</p>
+<p><strong>直接</strong>： </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add esp, 0Ch</span><br></pre></td></tr></table></figure>
+
+<p>​		这条指令会使当前栈缩小 12 bytes(注意图1的栈结构，add 指令使得 ESP 往高地址增加，因此栈变小)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sub esp, 0Ch</span><br></pre></td></tr></table></figure>
+
+<p>​		这条指令会使的当前栈增长 12 bytes(实际上，ESP 的值越大，栈越小，反之亦然)</p>
+<p><strong>间接</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">push  ebp    ; Save ebp, put it on the stack</span><br><span class="line">pop		ebp    ; Restore ebp, remove it from the stack</span><br></pre></td></tr></table></figure>
+
+<p>​		间接方式就是通过向栈中通过 PUSH 增加数据元素或者通过 POP 移除数据元素。</p>
+<p>​		除了堆栈指针，它指向堆栈的顶部（较低的数字地址）以外； 拥有一个堆栈帧指针 (FP) 通常很方便，它保存指向帧内固定位置的地址。查看栈帧发现，我们可以通过提供局部变量与 ESP 的偏移量(offests)来引用它们。</p>
+<p>​		但是，随着数据入栈和出栈，这些偏移量会发生变化，造成局部变量的引用不一致。因此，许多编译器使用另一个寄存器(通常称为帧指针 FP)，用于引用局部变量和参数，因为参数与 FP 的距离不会随 PUSH(递减ESP指针) 和 POP(递增ESP指针) 改变。</p>
+<p>​		在 Intel CPUs 中，EBP 充当了 FP 这个角色。由于栈的增长方式，实参有对于 EBP 的正偏移，本地变量有对于 EBP 的负偏移。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">MyFunc</span><span class="params">(<span class="type">int</span> parameter1, <span class="type">char</span> parameter2)</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="type">int</span> local1 = <span class="number">9</span>;</span><br><span class="line"><span class="type">char</span> local2 = ‘Z’;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">MyFunc(<span class="number">7</span>, ‘<span class="number">8</span>’);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>​	如上是一个简单的 C 语言程序，其内存布局将会如下所示：</p>
+<p>![程序内存布局](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-20210917232305924.png)</p>
+<p>​												      图2:程序的内存布局</p>
+<p>​		EBP 是一个指向栈底的静态指针。栈底是一个固定地址，更准确地说，EBP 寄存器包含堆栈底部的地址，作为相对于执行函数的偏移量。根据函数的任务，堆栈大小在运行时由内核动态调整。 每次调用新函数时，EBP 的旧值首先被压入堆栈，然后将 ESP 的新值移至 EBP。EBP 持有的 ESP 的这个新值成为局部变量的引用基础，这些变量需要检索分配给新函数调用的堆栈部分。</p>
+<p>​		如前所述，堆栈向下增长到较低的内存地址。 这是堆栈在包括 Intel、Motorola、SPARC 和 MIPS 处理器在内的许多计算机上增长的方式。堆栈指针 (ESP) 指向堆栈上的最后一个地址，而不是堆栈顶部之后的下一个空闲可用地址。</p>
+<p>​		一个函数在被调用时必须做的第一件事是保存之前的 EBP（便于它可以通过在函数退出时复制到 EIP 来恢复）。 然后它将 ESP 复制到 EBP 中以创建新的堆栈帧指针，并推进 ESP 为局部变量保留空间。这些代码被称为 <strong>procedure prolog</strong>。函数退出时必须再次清理栈，有时这被称为 <strong>procedure epilog</strong>。您可能会发现 Intel 提供了  ENTER 和 LEAVE 指令以及 Motorola 的 LINK 和 UNLINK 指令来高效地执行大部分 procedure prolog 和 procedure epilog 工作。</p>
+<h2 id="THE-FUNCTION-CALL-AND-STACK-FRAME-SOME-ANALYSIS"><a href="#THE-FUNCTION-CALL-AND-STACK-FRAME-SOME-ANALYSIS" class="headerlink" title="THE FUNCTION CALL AND STACK FRAME: SOME ANALYSIS"></a>THE FUNCTION CALL AND STACK FRAME: SOME ANALYSIS</h2><p>测试代码仍然是上文提到的简单代码，反编译后的结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">--- e:\test\testproga\winprocess.cpp  ------------------------</span><br><span class="line">10:</span><br><span class="line">11:   int main(int argc, char *argv[])</span><br><span class="line">12:   &#123;</span><br><span class="line">00401060   push        ebp</span><br><span class="line">00401061   mov         ebp, esp</span><br><span class="line">00401063   sub         esp, 40h</span><br><span class="line">00401066   push        ebx</span><br><span class="line">00401067   push        esi</span><br><span class="line">00401068   push        edi</span><br><span class="line">00401069   lea         edi, [ebp-40h]</span><br><span class="line">0040106C   mov         ecx, 10h</span><br><span class="line">00401071   mov         eax, 0CCCCCCCCh</span><br><span class="line">00401076   rep stos    dword ptr [edi]</span><br><span class="line">13:   MyFunc(7,&#x27;8&#x27;);</span><br><span class="line">------------------jump to MyFunc()----------------------------</span><br><span class="line">00401078   push        38h ;character 8 is pushed on the stack at [ebp+12]</span><br><span class="line">0040107A   push        7   ;integer 7 is pushed on the stack at [ebp+8]</span><br><span class="line">0040107C   call        @ILT+5(MyFunc) (0040100a);call MyFunc(), return address: 00401081 is pushed on the stack at [ebp+4]</span><br><span class="line">--------------------------------------------------------------</span><br><span class="line">@ILT+5(?MyFunc@@YAHHD@Z):  ;function decorated name, Visual C++ .Net</span><br><span class="line">0040100A   jmp         MyFunc (00401020)</span><br><span class="line">--- e:\test\testproga\testproga.cpp  -------------------------</span><br><span class="line">1:    //testproga.cpp</span><br><span class="line">2:    #include &lt;stdio.h&gt;</span><br><span class="line">3:</span><br><span class="line">4:    int MyFunc(int parameter1, char parameter2)</span><br><span class="line">5:    &#123;</span><br><span class="line">00401020   push        ebp        ;save the previous frame pointer at [ebp+0]</span><br><span class="line">00401021   mov         ebp, esp   ;the esp (top of the stack) becomes new ebp. The esp and ebp now are pointing to the same address.</span><br><span class="line">00401023   sub         esp, 48h   ;subtract 72 bytes for local variables &amp; buffer,where is the esp? [ebp-72]</span><br><span class="line">00401026   push        ebx        ;save, push ebx register, [ebp-76]</span><br><span class="line">00401027   push        esi        ;save, push esi register, [ebp-80]</span><br><span class="line">00401028   push        edi        ;save, push edi register, [ebp-84]</span><br><span class="line">00401029   lea         edi, [ebp-48h]    ;using the edi register…</span><br><span class="line">0040102C   mov         ecx, 12h</span><br><span class="line">00401031   mov         eax, 0CCCCCCCCh</span><br><span class="line">00401036   rep stos    dword ptr [edi]</span><br><span class="line">6:    int local1 = 9;</span><br><span class="line">00401038   mov         dword ptr [ebp-4], 9     ;move the local variable, integer 9 by pointer at [ebp-4]</span><br><span class="line">7:    char local2 = &#x27;Z&#x27;;</span><br><span class="line">0040103F   mov         byte ptr [ebp-8], 5Ah    ;move local variable, character Z by pointer at [ebp-8], no buffer usage in this program so can start dismantling the stack</span><br><span class="line">8:    return 0;</span><br><span class="line">00401043   xor         eax, eax   ;clear eax register, no return data</span><br><span class="line">9:    &#125;</span><br><span class="line">00401045   pop         edi        ;restore, pop edi register, [ebp-84]</span><br><span class="line">00401046   pop         esi        ;restore, pop esi register, [ebp-80]</span><br><span class="line">00401047   pop         ebx        ;restore, pop ebx register, [ebp-76]</span><br><span class="line">00401048   mov         esp, ebp   ;move ebp into esp, [ebp+0]. At this moment the esp and ebp are pointing at the same address</span><br><span class="line">0040104A   pop         ebp        ;then pop the saved ebp, [ebp+0] so the ebp is back pointing at the previous stack frame</span><br><span class="line">0040104B   ret                    ;load the saved eip, the return address: 00401081 into the eip and start executing the instruction,the address is [ebp+4]</span><br><span class="line">-----------------------------back to main()-------------------</span><br><span class="line">00401081   add         esp, 8     ;clear the parameters, 8 bytes for integer 7 and character 8 at [ebp+8] and [ebp+12] after this cleanup by the caller, main(), the MyFunc()’s stack is totally dismantled.</span><br><span class="line">14:   return 0;</span><br><span class="line">00401084   xor         eax, eax   ;clear eax register</span><br><span class="line">15:   &#125;</span><br><span class="line">00401086   pop         edi</span><br><span class="line">00401087   pop         esi</span><br><span class="line">00401088   pop         ebx</span><br><span class="line">00401089   add         esp, 40h</span><br><span class="line">0040108C   cmp         ebp, esp</span><br><span class="line">0040108E   call        __chkesp (004010b0)    ; checking the esp corruption?</span><br><span class="line">00401093   mov         esp, ebp               ; dismantling the stack</span><br><span class="line">00401095   pop         ebp</span><br><span class="line">00401096   ret</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>将参数从右到左 PUSH 入堆栈。</p>
+<p>​		参数被 PUSH 入堆栈，从右到左一次一个。 调用代码必须跟踪有多少字节的参数被压入堆栈，以便稍后清理它。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">00401078   push        38h;character 8 is pushed on the stack at [ebp+12]</span><br><span class="line"></span><br><span class="line">0040107A   push        7    ;integer 7 is pushed on the stack at [ebp+8]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数调用</p>
+<p>​		处理器将 EIP 的内容压入堆栈，它指向 CALL 指令后的第一个字节，即函数的返回地址。 完成后，调用者失去控制，被调用者负责。 这一步不会改变 EBP 寄存器，即当前堆栈帧指针。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0040107C   call        @ILT+5(MyFunc) (0040100a) ;call MyFunc(), return address:00401081, is pushed on the stack at [ebp+4]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存并且更新 EBP</p>
+<p>​		现在我们在新函数中，我们需要一个新的 EBP 指向的本地堆栈帧，所以这是通过保存当前的 EBP（属于前一个函数的帧，可能包括 main()）并使 其指向栈顶。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00401020  push    ebp      ;save the previous frame pointer at [ebp+0]</span><br><span class="line">00401021  mov     ebp, esp  ;the esp (top of the stack) becomes new ebp.The esp and ebp now are pointing to the same address.</span><br></pre></td></tr></table></figure>
+
+<p>​		一但 EBP 被更改，我们可以直接引用函数的参数（在第 1 步中PUSH）为 [ebp + 8]、[ebp +12] 等。注意 [ebp+0] 是旧的基指针（帧指针），而 [ebp+4] 是旧指令指针（EIP），即函数的返回地址。</p>
+</li>
+<li><p>为本地变量和 BUFFER 分配空间</p>
+<p>​		只需将堆栈<strong>栈顶指针</strong>递减所需的空间量即可。 这总是在四字节块（32 位系统）中完成。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00401023   sub    esp, 48h ;subtract 72 bytes for local variables &amp; buffer,where is the esp? [ebp-72]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存用于临时的处理寄存器(Save processor registers used for temporaries)</p>
+<p>​		如果此函数将使用任何处理器寄存器，则必须先保存旧值，以免破坏调用者或其他程序使用的数据。 每个要使用的寄存器一次一个地压入堆栈，编译器必须记住它做了什么，以便以后可以展开它。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">00401026   push        ebx       ;save, push ebx register, [ebp-76]</span><br><span class="line">00401027   push        esi       ;save, push esi register, [ebp-80]</span><br><span class="line">00401028   push        edi       ;save, push edi register, [ebp-84]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>PUSH本地变量</p>
+<p>​		现在，局部变量位于作为基址的 EBP 和作为堆栈顶部的 ESP 寄存器之间的堆栈上。 如前所述，按照惯例，EBP 寄存器用作堆栈帧引用上数据的偏移量。 这意味着 [ebp-4] 指的是第一个局部变量。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">6:    int local1 = 9;</span><br><span class="line">00401038   mov   dword ptr [ebp-4], 9    ;move the local variable, integer 9 by pointer at [ebp-4]</span><br><span class="line">7:    char local2 = &#x27;Z&#x27;;</span><br><span class="line">0040103F   mov   byte ptr [ebp-8], 5Ah   ;move local variable character Z by pointer at [ebp-8],no buffer usage in this program so can start dismantling the stack</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>函数执行的任务</p>
+<p>​		此时，堆栈帧已正确设置，如图 3 所示。所有参数和局部变量引用都是 EBP 寄存器的偏移量。 在我们的程序中，没有对该函数进行操作。 所以可以开始拆解函数的堆栈了。</p>
+<p>​		该函数可以自由使用在进入时已保存到堆栈中的任何 ebx、esi 和 edi 寄存器，但它不得更改堆栈指针 (EBP)。</p>
+</li>
+</ol>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow2_files/image011.png" alt="Stack frame setup"></p>
+<p>​														图3:程序栈帧布局</p>
+<ol start="8">
+<li><p>恢复保存的寄存器</p>
+<p>​		函数操作完成后，对于每个进入堆栈时保存到堆栈中的寄存器，必须以相反的顺序从堆栈中恢复。 如果保存和恢复阶段不完全匹配，堆栈将被破坏。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">00401045   pop     edi     ;restore, pop edi register, [ebp-84]</span><br><span class="line">00401046   pop     esi     ;restore, pop esi register, [ebp-80]</span><br><span class="line">00401047   pop     ebx     ;restore, pop ebx register, [ebp-76]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>恢复旧的基指针</p>
+<p>​		这个函数在进入时做的第一件事是保存调用者的 EBP 基指针，通过现在恢复它（从堆栈中弹出），我们有效地丢弃了整个本地堆栈帧并将调用者的帧放回之前的状态 .</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00401048   mov     esp, ebp ;move ebp into esp, [ebp+0]. At this moment the esp and ebp are pointing at the same address</span><br><span class="line">0040104A   pop     ebp      ;then pop the saved ebp, [ebp+0] so the ebp is back pointing at the previous stack frame</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从函数中返回</p>
+<p>​		这是被调用函数的最后一步，RET指令从堆栈中弹出保存的旧的EIP（返回地址）并跳转到该位置。 这将控制权交还给调用者。 只有堆栈指针 (EBP) 和指令指针 (EIP) 被子程序返回修改。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0040104B   ret   ;load the saved eip, the return address: 00401081 into the eip and start executing the instruction, the address is [ebp+4]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清理被 PUSH 的参数</p>
+<p>​		在 __cdecl 约定中，调用者必须清除压入堆栈的参数，这可以通过将堆栈弹出到函数参数的无关寄存器或直接将参数块大小添加到堆栈指针来完成 .</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">00401081   add      esp, 8 ;clear the parameters, 8 bytes for integer 7 and character 8 at [ebp+8] and [ebp+12] after this cleanup by the caller, main(),the MyFunc()’s stack is totally dismantled.</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>​        你也可以从汇编的角度看到，在使用堆栈时，它必须在 PUSH 和 POP 的字节数方面对称。 如前所述，函数的堆栈构造前后必须有平衡。 显然，如果堆栈在退出函数时不平衡，则程序执行将从错误的地址开始，这几乎只会使程序崩溃。 在大多数情况下，如果您将给定的数据大小压入堆栈，请确保您必须弹出相同的数据大小。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/09/21/BO6-%E5%87%BD%E6%95%B0%E6%A0%88/" data-id="cl6x1oiiz00016mgq4gugh9rn" data-title="函数栈" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/09/21/BO2-X86%E6%9E%B6%E6%9E%84%E5%9F%BA%E7%A1%80/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          X86架构基础
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/WP/" rel="tag">WP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/adword/" rel="tag">adword</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/" rel="tag">格式化字符串漏洞</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/WP/" style="font-size: 10px;">WP</a> <a href="/tags/adword/" style="font-size: 10px;">adword</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/" style="font-size: 10px;">格式化字符串漏洞</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/06/28/adworld-pwn/">攻防世界-新手区</a>
+          </li>
+        
+          <li>
+            <a href="/2022/06/22/Format%20String%20Vulnerailites/">格式化字符串漏洞</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/11/BO9-shellcode/">shell code</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/09/BO8-%E6%A0%88%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/">栈缓冲区溢出</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/09/BO7-%E6%A0%88%E6%93%8D%E4%BD%9C/">栈操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

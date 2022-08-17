@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>栈操作 | PlayDumb</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="The Stack OperationPROCESSOR’S STACK: TRACING THE ACTION函数调用和栈可以总结如下：  将参数压入栈中 调用函数（压入函数返回地址） （内置函数）为局部变量和缓冲区存储设置栈帧 在函数返回之前，调整栈帧来解除局部变量和缓冲区存储的分配 返回（弹出返回地址）并且调整栈来移除函数参数  一个C程序如下： 1234567891011121314#in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="栈操作">
+<meta property="og:url" content="http://example.com/2021/10/09/BO7-%E6%A0%88%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="PlayDumb">
+<meta property="og:description" content="The Stack OperationPROCESSOR’S STACK: TRACING THE ACTION函数调用和栈可以总结如下：  将参数压入栈中 调用函数（压入函数返回地址） （内置函数）为局部变量和缓冲区存储设置栈帧 在函数返回之前，调整栈帧来解除局部变量和缓冲区存储的分配 返回（弹出返回地址）并且调整栈来移除函数参数  一个C程序如下： 1234567891011121314#in">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image001.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image002.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image003.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image004.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image005.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image006.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image007.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image008.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image009.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image010.png">
+<meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image011.png">
+<meta property="article:published_time" content="2021-10-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-08-17T02:22:07.411Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="pwn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image001.png">
+  
+    <link rel="alternate" href="/atom.xml" title="PlayDumb" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">PlayDumb</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-BO7-栈操作" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/10/09/BO7-%E6%A0%88%E6%93%8D%E4%BD%9C/" class="article-date">
+  <time class="dt-published" datetime="2021-10-08T16:00:00.000Z" itemprop="datePublished">2021-10-09</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/pwn/">pwn</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      栈操作
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="The-Stack-Operation"><a href="#The-Stack-Operation" class="headerlink" title="The Stack Operation"></a>The Stack Operation</h1><h2 id="PROCESSOR’S-STACK-TRACING-THE-ACTION"><a href="#PROCESSOR’S-STACK-TRACING-THE-ACTION" class="headerlink" title="PROCESSOR’S STACK: TRACING THE ACTION"></a>PROCESSOR’S STACK: TRACING THE ACTION</h2><p>函数调用和栈可以总结如下：</p>
+<ol>
+<li>将参数压入栈中</li>
+<li>调用函数（压入函数返回地址）</li>
+<li>（内置函数）为局部变量和缓冲区存储设置栈帧</li>
+<li>在函数返回之前，调整栈帧来解除局部变量和缓冲区存储的分配</li>
+<li>返回（弹出返回地址）并且调整栈来移除函数参数</li>
+</ol>
+<p>一个C程序如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">TestFunc</span><span class="params">(<span class="type">int</span> parameter1,<span class="type">int</span> parameter2,<span class="type">char</span> parameter3)</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="type">int</span> y = <span class="number">3</span>, z = <span class="number">4</span>;</span><br><span class="line"><span class="type">char</span> buff[<span class="number">7</span>] = <span class="string">&quot;ABCDEF&quot;</span>;</span><br><span class="line"><span class="comment">// function&#x27;s task code here</span></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[ ])</span></span><br><span class="line">&#123;</span><br><span class="line">TestFunc(<span class="number">1</span>, <span class="number">2</span>, <span class="string">&#x27;A&#x27;</span>);</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先进行编译</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -o testprog5 testprog5.c</span><br></pre></td></tr></table></figure>
+
+<p>使用 gdb 查看 </p>
+<p>main 部分汇编</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">(gdb) break main</span><br><span class="line"></span><br><span class="line">Breakpoint 1 at 0x8048388: file testprog5.c, line 14.</span><br><span class="line"></span><br><span class="line">(gdb) disass main</span><br><span class="line"></span><br><span class="line">Dump of assembler code for function main:</span><br><span class="line"></span><br><span class="line">0x0804836c &lt;main+0&gt;:    push   %ebp                   ;main stack frame</span><br><span class="line"></span><br><span class="line">0x0804836d &lt;main+1&gt;:    mov    %esp, %ebp</span><br><span class="line"></span><br><span class="line">0x0804836f &lt;main+3&gt;:    sub    $0x8, %esp</span><br><span class="line"></span><br><span class="line">0x08048372 &lt;main+6&gt;:    and    $0xfffffff0, %esp</span><br><span class="line"></span><br><span class="line">0x08048375 &lt;main+9&gt;:    mov    $0x0, %eax</span><br><span class="line"></span><br><span class="line">0x0804837a &lt;main+14&gt;:   add    $0xf, %eax</span><br><span class="line"></span><br><span class="line">0x0804837d &lt;main+17&gt;:   add    $0xf, %eax</span><br><span class="line"></span><br><span class="line">0x08048380 &lt;main+20&gt;:   shr    $0x4, %eax</span><br><span class="line"></span><br><span class="line">0x08048383 &lt;main+23&gt;:   shl    $0x4, %eax</span><br><span class="line"></span><br><span class="line">0x08048386 &lt;main+26&gt;:   sub    %eax, %esp</span><br><span class="line"></span><br><span class="line">0x08048388 &lt;main+28&gt;:   movb   $0x41, 0xffffffff(%ebp) ;prepare the byte of ‘A’</span><br><span class="line"></span><br><span class="line">0x0804838c &lt;main+32&gt;:   movsbl 0xffffffff(%ebp), %eax  ;put into eax</span><br><span class="line"></span><br><span class="line">0x08048390 &lt;main+36&gt;:   push   %eax           ;push the third parameter, ‘A’ prepared in eax onto the stack, [ebp+16]</span><br><span class="line"></span><br><span class="line">0x08048391 &lt;main+37&gt;:   push   $0x2            ;push the second parameter, 2 onto the stack, [ebp+12]</span><br><span class="line"></span><br><span class="line">0x08048393 &lt;main+39&gt;:   push   $0x1            ;push the first parameter, 1 onto the stack, [ebp+8]</span><br><span class="line"></span><br><span class="line">------------------------------------------------</span><br><span class="line"></span><br><span class="line">0x08048395 &lt;main+41&gt;:   call   0x8048334 &lt;TestFunc&gt;   ;function call. Push the return address [0x0804839a] onto the stack, [ebp+4]</span><br><span class="line"></span><br><span class="line">------------------------------------------------</span><br><span class="line"></span><br><span class="line">0x0804839a &lt;main+46&gt;:   add    $0xc, %esp      ;cleanup the 3 parameters pushed on the stack at [ebp+8], [ebp+12] and [ebp+16] total up 12 bytes</span><br><span class="line"></span><br><span class="line">0x0804839d &lt;main+49&gt;:   mov    $0x0, %eax</span><br><span class="line"></span><br><span class="line">0x080483a2 &lt;main+54&gt;:   leave</span><br><span class="line"></span><br><span class="line">0x080483a3 &lt;main+55&gt;:   ret</span><br><span class="line"></span><br><span class="line">End of assembler dump.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>TestFunc 部分汇编</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">(gdb) break TestFunc</span><br><span class="line"></span><br><span class="line">Breakpoint 2 at 0x8048342: file testprog5.c, line 5.</span><br><span class="line"></span><br><span class="line">(gdb) disass TestFunc</span><br><span class="line"></span><br><span class="line">Dump of assembler code for function TestFunc:</span><br><span class="line"></span><br><span class="line">0x08048334 &lt;TestFunc+0&gt;:        push   %ebp                 ;push the previous stack frame pointer onto the stack, [ebp+0]</span><br><span class="line"></span><br><span class="line">0x08048335 &lt;TestFunc+1&gt;:        mov    %esp, %ebp      ;copy the ebp into esp, now the ebp and esp are pointing at the same address, creating new stack frame [ebp+0]</span><br><span class="line"></span><br><span class="line">0x08048337 &lt;TestFunc+3&gt;:        push   %edi                   ;save/push edi register, [ebp-4]</span><br><span class="line"></span><br><span class="line">0x08048338 &lt;TestFunc+4&gt;:        push   %esi                   ;save/push esi register, [ebp-8]</span><br><span class="line"></span><br><span class="line">0x08048339 &lt;TestFunc+5&gt;:        sub    $0x20, %esp       ;subtract esp by 32 bytes for local variable and buffer if any, go to [ebp-40]</span><br><span class="line"></span><br><span class="line">0x0804833c &lt;TestFunc+8&gt;:        mov    0x10(%ebp), %eax      ;move by pointer, [ebp+16] into the eax,[ebp+16]à ‘A’?</span><br><span class="line"></span><br><span class="line">0x0804833f &lt;TestFunc+11&gt;:       mov    %al, 0xfffffff7(%ebp)     ;move by pointer, byte of al into [ebp-9]</span><br><span class="line">0x08048342 &lt;TestFunc+14&gt;:       movl   $0x3, 0xfffffff0(%ebp)  ;move by pointer, 3 into [ebp-16]</span><br><span class="line">0x08048349 &lt;TestFunc+21&gt;:       movl   $0x4, 0xffffffec(%ebp) ;move by pointer, 4 into [ebp-20]</span><br><span class="line"></span><br><span class="line">0x08048350 &lt;TestFunc+28&gt;:       lea    0xffffffd8(%ebp), %edi  ;load address [ebp-40] into edi</span><br><span class="line"></span><br><span class="line">0x08048353 &lt;TestFunc+31&gt;:       mov    $0x8048484, %esi     ;move string into esi</span><br><span class="line"></span><br><span class="line">0x08048358 &lt;TestFunc+36&gt;:       cld                                            ;clear direction flag</span><br><span class="line"></span><br><span class="line">0x08048359 &lt;TestFunc+37&gt;:       mov    $0x7, %ecx                  ;move 7 into ecx as counter for the array</span><br><span class="line"></span><br><span class="line">0x0804835e &lt;TestFunc+42&gt;:       repz movsb %ds:(%esi), %es:(%edi)    ;start copy by pointer from esi to edi register</span><br><span class="line"></span><br><span class="line">0x08048360 &lt;TestFunc+44&gt;:       mov    $0x0, %eax                   ;move return value into eax, 0 in this case, no return value</span><br><span class="line"></span><br><span class="line">0x08048365 &lt;TestFunc+49&gt;:       add    $0x20, %esp                 ;add 32 bytes to esp, back to [ebp-8]</span><br><span class="line"></span><br><span class="line">0x08048368 &lt;TestFunc+52&gt;:       pop    %esi                         ;restore the esi, [ebp-4]</span><br><span class="line"></span><br><span class="line">0x08048369 &lt;TestFunc+53&gt;:       pop    %edi                         ;restore the edi, [ebp+0]</span><br><span class="line"></span><br><span class="line">0x0804836a &lt;TestFunc+54&gt;:       leave          ;restoring the ebp to the previous stack frame, [ebp+4]</span><br><span class="line"></span><br><span class="line">0x0804836b &lt;TestFunc+55&gt;:       ret               ;transfer control back to calling function using the saved return address at [ebp+8]</span><br><span class="line"></span><br><span class="line">End of assembler dump.</span><br></pre></td></tr></table></figure>
+
+<p>​		这里使用的约定是允许被调用者在返回之前弄乱 EAX、ECX 和 EDX 寄存器的值。 因此，如果调用者想要保留 EAX、ECX 和 EDX 的值，则调用者必须在进行函数调用之前将它们显式保存在堆栈中。 另一方面，被调用者必须恢复 EBX、ESI 和 EDI 寄存器的值。 如果被调用者对这些寄存器进行了更改，则被调用者还必须将受影响的寄存器保存在堆栈中，并在稍后返回之前恢复原始值。</p>
+<p>​		4 个字节或更少的返回值存储在 EAX 寄存器中。 如果需要超过 4 个字节的返回值，则调用者将额外的第一个参数传递给被调用者。 这个额外的参数是应该存储返回值的位置的地址。 例如，对于 C 函数调用： </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = TestFunc(a, b, c);</span><br></pre></td></tr></table></figure>
+
+<p>将会被转化成如下的样子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TestFunc(&amp;x, a, b, c);</span><br></pre></td></tr></table></figure>
+
+<p>请注意，这只发生在返回超过 4 个字节的函数调用中。 在我们的示例中，调用者是 main() 函数，即将调用函数 TestFunc()，即被调用者。 在函数调用之前，main() 将 ESP 和 EBP 寄存器用于其自己的堆栈帧。 首先，main() 将寄存器 EAX、ECX 和 EDX 的内容压入堆栈（如果有）（图中未显示）。 这是一个可选步骤，仅当需要保留这三个寄存器的内容时才执行。</p>
+<p>第一步：将参数按照从右到左的顺序压入栈中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">TestFunc(1, 2, &#x27;A&#x27;);</span><br><span class="line">0x08048388 &lt;main+28&gt;:   movb   $0x41, 0xffffffff(%ebp);prepare the byte of ‘A’</span><br><span class="line">0x0804838c &lt;main+32&gt;:   movsbl 0xffffffff(%ebp), %eax ;put into eax</span><br><span class="line"></span><br><span class="line">0x08048390 &lt;main+36&gt;:   push   %eax                   ;push the third parameter, ‘A’ prepared in eax onto the stack, [ebp+16]</span><br><span class="line"></span><br><span class="line">0x08048391 &lt;main+37&gt;:   push   $0x2                   ;push the second parameter, 2 onto the stack [ebp+12]</span><br><span class="line"></span><br><span class="line">0x08048393 &lt;main+39&gt;:   push   $0x1                   ;push the first parameter, 1 ont the stack, [ebp+8]</span><br></pre></td></tr></table></figure>
+
+<p>栈变化如图</p>
+<p>之前：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image001.png" alt="Initial state of the stack"></p>
+<p>之后：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image002.png" alt="Pushing the parameters on the stack from right to left"></p>
+<p>第二步：调用 TestFunc()，将函数返回地址，即 CALL 指令之后的地址压入堆栈。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x08048395 &lt;main+41&gt;:   call   0x8048334 &lt;TestFunc&gt;   ;function call.Push the return address [0x0804839a] onto the stack, [ebp+4]</span><br></pre></td></tr></table></figure>
+
+<p>该指令调用函数TestFunc()，其开头位于地址0x8048334。</p>
+<p>当执行 CALL 指令时，EIP 寄存器的内容被压入堆栈。 EIP 寄存器包含紧跟在 CALL 指令之后的指令的偏移量，供以后用作函数的返回地址。 由于 EIP 寄存器指向 main() 中的下一条指令，因此返回地址现在位于堆栈顶部。 在 CALL 指令之后，下一个执行周期从名为 TestFunc 的标签开始。</p>
+<p>之前：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image003.png" alt="Ready to call a function, operation transferred to the function"></p>
+<p>之后：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image004.png" alt="Push the function return address onto the stack"></p>
+<p>第三步：设置堆栈帧，保存寄存器，为局部变量和缓冲区分配存储空间。</p>
+<p>当在函数 TestFunc() 中，被调用者获得程序的控制权时，它必须做 3 件事：建立自己的堆栈帧，根据需要保存寄存器 EBX、ESI 和 EDI 的内容并为本地存储分配空间（ 局部变量和缓冲区）。 这称为<strong>function prolog</strong>，TestFunc() 的示例如下所示</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">0x08048334 &lt;TestFunc+0&gt;:        push   %ebp        ;push the previous stack frame pointer onto the stack, [ebp+0]</span><br><span class="line"></span><br><span class="line">0x08048335 &lt;TestFunc+1&gt;:        mov    %esp, %ebp   ;copy the ebp into esp, now the ebp and esp are pointing at the same address,creating new stack frame [ebp+0]</span><br><span class="line"></span><br><span class="line">0x08048337 &lt;TestFunc+3&gt;:        push   %edi        ;save/push edi register, [ebp-4]</span><br><span class="line"></span><br><span class="line">0x08048338 &lt;TestFunc+4&gt;:        push   %esi        ;save/push esi register, [ebp-8]</span><br><span class="line"></span><br><span class="line">0x08048339 &lt;TestFunc+5&gt;:        sub    $0x20, %esp  ;subtract esp by 32 bytes for local variable and buffer if any, go to [ebp-40]</span><br></pre></td></tr></table></figure>
+
+<p>EBP 寄存器当前指向 main() 堆栈帧中的位置。 必须保留此值。 因此，EBP 被压入堆栈。 然后ESP的内容被传送到EBP。 这允许函数的参数被引用为 EBP 的偏移量，并释放堆栈寄存器-ESP 来做其他事情。</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image005.png" alt="Pushing the EBP onto the stack, saving the previous stack frame"></p>
+<p>因此，几乎所有的 C 函数都会以以下两条汇编指令开始：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x08048334 &lt;TestFunc+0&gt;:        push   %ebp</span><br><span class="line">0x08048335 &lt;TestFunc+1&gt;:        mov    %esp, %ebp</span><br></pre></td></tr></table></figure>
+
+<p>在函数内部，参数从基指针 (EBP) 的正偏移量访问，局部变量作为基指针的负偏移量访问。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">push        ebp                ; Save ebp, the previous frame</span><br><span class="line">mov         ebp, esp           ; Set the new stack frame pointer</span><br><span class="line">sub         esp, localbytes    ; Allocate space for locals</span><br><span class="line">push        &lt;registers&gt;        ; Optionally, save registers if any</span><br><span class="line"></span><br><span class="line">e.g.</span><br><span class="line"></span><br><span class="line">00411A30  push        ebp        ; Save ebp</span><br><span class="line"></span><br><span class="line">00411A31  mov         ebp, esp   ; Set the new stack frame pointer</span><br><span class="line"></span><br><span class="line">00411A33  sub         esp, 0C0h  ; Allocate space for locals</span><br><span class="line"></span><br><span class="line">00411A39  push        ebx        ; optionally, save register if any</span><br><span class="line"></span><br><span class="line">00411A3A  push        esi        ; save register if any</span><br><span class="line"></span><br><span class="line">00411A3B  push        edi        ; save register if any</span><br></pre></td></tr></table></figure>
+
+<p>localbytes 变量表示局部变量所需的堆栈上的字节数，而 <registers> 变量是一个占位符，表示要保存在堆栈上的寄存器列表（如果有）。 压入寄存器后，您可以将任何其他适当的数据放在堆栈中。 在 Linux&#x2F;Intel 中，最后两条指令的顺序互换，如下面的代码所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">push        %ebp                ; Save ebp</span><br><span class="line">mov         %ebp, %esp          ; Set stack frame pointer</span><br><span class="line">push        &lt;registers&gt;         ; optionally, save registers if any</span><br><span class="line">sub         localbytes, %esp    ; Allocate space for locals</span><br><span class="line"></span><br><span class="line">e.g.</span><br><span class="line"></span><br><span class="line">push   %ebp         ;push the previous stack frame pointer onto the stack, [ebp+0]</span><br><span class="line"></span><br><span class="line">mov    %esp, %ebp    ;copy the ebp into esp, now the ebp and esp are pointing at the same address, creating new stack frame [ebp+0]</span><br><span class="line"></span><br><span class="line">push   %edi         ;save/push edi register, [ebp-4]</span><br><span class="line"></span><br><span class="line">push   %esi         ;save/push esi register, [ebp-8]</span><br><span class="line"></span><br><span class="line">sub    $0x20, %esp   ;subtracts esp by 32 bytes for local variable and buffer if any, go to [ebp-40]</span><br></pre></td></tr></table></figure>
+
+<p>在我们的程序示例中，看起来 ESI 和 EDI 寄存器的内容已被保留，这意味着 TestFunc() 将使用这些寄存器。 这就是为什么这些寄存器被压入堆栈的原因。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x08048337 &lt;TestFunc+3&gt;:    push   %edi  ;save/push edi register, [ebp-4]</span><br><span class="line"></span><br><span class="line">0x08048338 &lt;TestFunc+4&gt;:    push   %esi  ;save/push esi register, [ebp-8]</span><br></pre></td></tr></table></figure>
+
+<p>然后，TestFunc() 必须为其局部变量分配空间。 它还必须为它可能需要的任何临时存储（缓冲区）分配空间。 例如，TestFunc() 中的一些 C 语句可能有表达式来完成函数的任务。 在表达式&#x2F;语句操作期间，可能存在必须存储在某处的中间值。 这些位置通常称为缓冲区，因为它们可以重用于下一个表达式、动态分配和释放的数据。 在这个程序示例中，从堆栈指针中减去了 32 (0x20) 个字节，即局部变量的 esp：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x08048339 &lt;TestFunc+5&gt;:    sub    $0x20, %esp     ;subtract esp by 32 bytes for local variable and buffer if any, go to [ebp-40]</span><br></pre></td></tr></table></figure>
+
+<p>然后将局部变量压入堆栈。 请记住，TestFunc() 不执行任何操作，因此没有用于函数操作的缓冲区。 这里的操作似乎是假的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">0x0804833c &lt;TestFunc+8&gt;:    mov    0x10(%ebp), %eax       ;move by pointer, [ebp+16] into the eax, [ebp+16]à‘A’?</span><br><span class="line"></span><br><span class="line">0x0804833f &lt;TestFunc+11&gt;:   mov    %al, 0xfffffff7(%ebp) ;move by pointer, byte of al into [ebp-9]</span><br><span class="line"></span><br><span class="line">0x08048342 &lt;TestFunc+14&gt;:   movl   $0x3, 0xfffffff0(%ebp);move by pointer, 3 into [ebp-16]</span><br><span class="line"></span><br><span class="line">0x08048349 &lt;TestFunc+21&gt;:   movl   $0x4, 0xffffffec(%ebp);move by pointer, 4 into [ebp-20]</span><br><span class="line"></span><br><span class="line">0x08048350 &lt;TestFunc+28&gt;:   lea    0xffffffd8(%ebp), %edi ;load address [ebp-40] into edi</span><br><span class="line"></span><br><span class="line">0x08048353 &lt;TestFunc+31&gt;:   mov    $0x8048484, %esi       ;move string into esi</span><br><span class="line"></span><br><span class="line">0x08048358 &lt;TestFunc+36&gt;:   cld                          ;clear direction flag</span><br><span class="line"></span><br><span class="line">0x08048359 &lt;TestFunc+37&gt;:   mov    $0x7, %ecx         ;move 7 into ecx as counter for the array</span><br><span class="line"></span><br><span class="line">0x0804835e &lt;TestFunc+42&gt;:   repz movsb %ds:(%esi), %es:(%edi) ;start copy by pointer from esi to edi register</span><br></pre></td></tr></table></figure>
+
+<p>现在可以执行函数 TestFunc() 的主体。 这可能涉及推入和弹出堆栈。 因此，堆栈指针 ESP 可能会上下移动，但 EBP 寄存器保持固定。 这很方便，因为这意味着我们始终可以将第一个函数参数称为 [EBP + 8]，而不管函数中进行了多少推入和弹出。 函数 TestFunc() 的执行也可能涉及其他函数调用，甚至对 TestFunc() 的递归调用。 但是，只要在从这些调用返回时恢复 EBP 寄存器，对参数、局部变量和缓冲区的引用就可以继续作为 EBP 的偏移量进行。 不同的汇编语言&#x2F;编译器之间的过程序言非常一致，因为它们可能使用相同的函数调用约定。</p>
+<p>之前：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image006.png" alt="Set up the stack frame, save registers, allocates storage for local variables and the buffer"></p>
+<p>之后：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image007.png" alt="Set up the stack frame, save registers, allocates storage for local variables and the buffer and processing happens"></p>
+<p>​		堆栈总是向下增长（从高内存地址到低内存地址）。 要访问局部变量，请通过从 ebp 中减去适当的值以及从 ebp 开始从 [ebp+8] 开始的具有正偏移量的参数来计算 ebp 的负偏移量。</p>
+<p>​		如果有的话，在将控制权返回给调用者之前，被调用者 TestFunc() 必须首先安排将返回值存储在 EAX 寄存器中。 我们已经讨论了带返回值的函数调用如何存储值。 在我们的程序示例中，0 被移动到 EAX，因为没有返回值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x08048360 &lt;TestFunc+44&gt;:    mov    $0x0, %eax   ;move return value into eax,0 in this case, no return value</span><br></pre></td></tr></table></figure>
+
+<p>第四步：拆除堆栈帧（释放局部变量和缓冲区的存储空间）</p>
+<p>这一步称为<strong>function epilog</strong>。 以下是我们的 Linux&#x2F;Intel程序示例，它使用 __cdelc 函数调用约定，其中堆栈清理由调用者完成。 在此之前，预拆解是由被调用方完成的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x08048365 &lt;TestFunc+49&gt;:   add    $0x20, %esp     ;add 32 bytes to esp, back to [ebp-8]</span><br><span class="line"></span><br><span class="line">0x08048368 &lt;TestFunc+52&gt;:   pop    %esi           ;restore the esi, [ebp-4]</span><br><span class="line"></span><br><span class="line">0x08048369 &lt;TestFunc+53&gt;:   pop    %edi           ;restore the edi, [ebp+0]</span><br></pre></td></tr></table></figure>
+
+<p>32 字节被添加到 esp，然后 esp 现在指向 [ebp-8] 以便破坏局部变量和缓冲区。 然后 esi ([ebp-4]) 和 edi ([ebp-8]) 从堆栈中弹出。 esp and ebp 现在指向之前保存的 ebp [ebp+0]。</p>
+<p>不同的汇编语言&#x2F;编译器之间的函数结语不一致，原因之一是如前所述使用的不同函数调用约定。 以下是使用 __cdecl 的函数结语代码示例（Windows&#x2F;Intel），其中堆栈清理由调用者完成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line">pop         &lt;registers&gt;   ; Restore registers</span><br><span class="line"></span><br><span class="line">mov         esp, ebp      ; Restore stack pointer</span><br><span class="line"></span><br><span class="line">pop         ebp           ; Restore ebp</span><br><span class="line"></span><br><span class="line">ret                      ; Return from function</span><br><span class="line"></span><br><span class="line">--------Back to the calling function------------</span><br><span class="line"></span><br><span class="line">add         esp, &lt;localbytes&gt;     ; cleanup the parameters</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">e.g</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">00411A6A  pop         edi</span><br><span class="line"></span><br><span class="line">00411A6B  pop         esi</span><br><span class="line"></span><br><span class="line">00411A6C  pop         ebx</span><br><span class="line"></span><br><span class="line">00411A6D  mov         esp, ebp</span><br><span class="line"></span><br><span class="line">00411A6F  pop         ebp</span><br><span class="line"></span><br><span class="line">00411A70  ret</span><br><span class="line"></span><br><span class="line">----------Back to the calling function------------</span><br><span class="line"></span><br><span class="line">00411AB9  add         esp, 8</span><br><span class="line"></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>之前：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image008.png" alt="Dismantling the stack frame"></p>
+<p>之后：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image009.png" alt="Dismantling the stack frame, restore the previous stack frame"></p>
+<p>STEP 5：函数调用返回，紧接CALL指令后进入下一条指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x0804836a &lt;TestFunc+54&gt;:    leave   ;restoring the ebp to the previous stack frame, [ebp+4]</span><br><span class="line"></span><br><span class="line">0x0804836b &lt;TestFunc+55&gt;:    ret     ;transfer control back to calling function using the saved return address at [ebp+8]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>旧的帧指针 B（保存的前一个 EBP）然后从堆栈帧中弹出。 实际上，这会将 EBP 移回前一个调用者堆栈帧 (B) 的底部，并且 esp 现在指向返回地址。 然后返回地址被弹出并加载到 EIP 中。 控制权现在转移到 main()。 main() 中的以下代码表明已经从 esp 中减去了 12 个字节</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x0804839a &lt;main+46&gt;:   add    $0xc, %esp   ;cleanup the 3 parameters pushed on the stack at [ebp+8], [ebp+12] and [ebp+16]total up is 12 bytes = 0xc</span><br></pre></td></tr></table></figure>
+
+<p>这使得三个参数离开堆栈（4 字节 x 3 &#x3D; 12 字节）并且 esp 现在指向前一个堆栈帧 (T) 的顶部。 此时TestFunc()栈帧已经被拆除，栈帧的状态已经恢复到前一栈帧，如步骤1。</p>
+<p>之前：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image010.png" alt="Return from function call"></p>
+<p>之后：</p>
+<p><img src="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow3_files/image011.png" alt="Return from function call, the stack has been destroyed back to the initial state"></p>
+<p>本节的主要目的是演示函数调用过程中栈帧的构造和销毁。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/10/09/BO7-%E6%A0%88%E6%93%8D%E4%BD%9C/" data-id="cl6x1oijd000g6mgqfqmhgpy9" data-title="栈操作" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/10/09/BO8-%E6%A0%88%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          栈缓冲区溢出
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/09/21/BO2-X86%E6%9E%B6%E6%9E%84%E5%9F%BA%E7%A1%80/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">X86架构基础</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/pwn/">pwn</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/WP/" rel="tag">WP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/adword/" rel="tag">adword</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ctf/" rel="tag">ctf</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/pwn/" rel="tag">pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/" rel="tag">格式化字符串漏洞</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/WP/" style="font-size: 10px;">WP</a> <a href="/tags/adword/" style="font-size: 10px;">adword</a> <a href="/tags/ctf/" style="font-size: 10px;">ctf</a> <a href="/tags/pwn/" style="font-size: 20px;">pwn</a> <a href="/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%BC%8F%E6%B4%9E/" style="font-size: 10px;">格式化字符串漏洞</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/10/">October 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/06/28/adworld-pwn/">攻防世界-新手区</a>
+          </li>
+        
+          <li>
+            <a href="/2022/06/22/Format%20String%20Vulnerailites/">格式化字符串漏洞</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/11/BO9-shellcode/">shell code</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/09/BO8-%E6%A0%88%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/">栈缓冲区溢出</a>
+          </li>
+        
+          <li>
+            <a href="/2021/10/09/BO7-%E6%A0%88%E6%93%8D%E4%BD%9C/">栈操作</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 John Doe<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
