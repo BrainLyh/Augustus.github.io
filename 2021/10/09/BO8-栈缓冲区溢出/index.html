@@ -6,12 +6,12 @@
   
   <title>栈缓冲区溢出 | PlayDumb</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="测试用缓冲区溢出代码在下面的程序示例中，我们将研究基于堆栈的缓冲区溢出是如何发生的。 我们将使用标准的 C gets() 易受攻击的函数（从标准输入读取并存储在缓冲区中而不进行边界检查）并且溢出将发生在 Test() 函数中。 Test() 函数的缓冲区最多只能容纳 3 个字符加上 NULL，因此 4 个或更多字符应该溢出其缓冲区，我们将尝试演示覆盖保存的 ebp 和 Test() 的返回地址。">
+  <meta name="description" content="测试用缓冲区溢出代码在下面的程序示例中，我们将研究基于堆栈的缓冲区溢出是如何发生的。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="栈缓冲区溢出">
 <meta property="og:url" content="http://example.com/2021/10/09/BO8-%E6%A0%88%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA/index.html">
 <meta property="og:site_name" content="PlayDumb">
-<meta property="og:description" content="测试用缓冲区溢出代码在下面的程序示例中，我们将研究基于堆栈的缓冲区溢出是如何发生的。 我们将使用标准的 C gets() 易受攻击的函数（从标准输入读取并存储在缓冲区中而不进行边界检查）并且溢出将发生在 Test() 函数中。 Test() 函数的缓冲区最多只能容纳 3 个字符加上 NULL，因此 4 个或更多字符应该溢出其缓冲区，我们将尝试演示覆盖保存的 ebp 和 Test() 的返回地址。">
+<meta property="og:description" content="测试用缓冲区溢出代码在下面的程序示例中，我们将研究基于堆栈的缓冲区溢出是如何发生的。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow4_files/image001.png">
 <meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow4_files/image002.png">
@@ -23,7 +23,7 @@
 <meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow4_files/image008.png">
 <meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow4_files/image009.png">
 <meta property="article:published_time" content="2021-10-08T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-08-17T02:23:11.346Z">
+<meta property="article:modified_time" content="2022-08-17T03:53:25.151Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
@@ -110,7 +110,10 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h1 id="测试用缓冲区溢出代码"><a href="#测试用缓冲区溢出代码" class="headerlink" title="测试用缓冲区溢出代码"></a>测试用缓冲区溢出代码</h1><p>在下面的程序示例中，我们将研究基于堆栈的缓冲区溢出是如何发生的。 我们将使用标准的 C gets() 易受攻击的函数（从标准输入读取并存储在缓冲区中而不进行边界检查）并且溢出将发生在 Test() 函数中。 Test() 函数的缓冲区最多只能容纳 3 个字符加上 NULL，因此 4 个或更多字符应该溢出其缓冲区，我们将尝试演示覆盖保存的 ebp 和 Test() 的返回地址。 测试是在 Linux Fedora Core 3 上完成的。</p>
+        <h1 id="测试用缓冲区溢出代码"><a href="#测试用缓冲区溢出代码" class="headerlink" title="测试用缓冲区溢出代码"></a>测试用缓冲区溢出代码</h1><p>在下面的程序示例中，我们将研究基于堆栈的缓冲区溢出是如何发生的。</p>
+<span id="more"></span>
+
+<p> 我们将使用标准的 C gets() 易受攻击的函数（从标准输入读取并存储在缓冲区中而不进行边界检查）并且溢出将发生在 Test() 函数中。 Test() 函数的缓冲区最多只能容纳 3 个字符加上 NULL，因此 4 个或更多字符应该溢出其缓冲区，我们将尝试演示覆盖保存的 ebp 和 Test() 的返回地址。 测试是在 Linux Fedora Core 3 上完成的。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* test buffer program */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">Test</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">   <span class="type">char</span> buff[<span class="number">4</span>];</span><br><span class="line">   <span class="built_in">printf</span>(<span class="string">&quot;Some input: &quot;</span>);</span><br><span class="line">   gets(buff);</span><br><span class="line">   <span class="built_in">puts</span>(buff);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[ ])</span></span><br><span class="line">&#123;</span><br><span class="line">   Test();</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h1 id="BUFFER-OVERFLOW-PROGRAM-EXECUTIONS"><a href="#BUFFER-OVERFLOW-PROGRAM-EXECUTIONS" class="headerlink" title="BUFFER OVERFLOW PROGRAM EXECUTIONS"></a><strong>BUFFER OVERFLOW PROGRAM EXECUTIONS</strong></h1><p>接着我们通过输入3，5，8和12个字符来运行代码：</p>

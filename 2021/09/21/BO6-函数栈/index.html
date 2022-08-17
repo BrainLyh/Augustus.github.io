@@ -6,16 +6,16 @@
   
   <title>函数栈 | PlayDumb</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="BUFFER OVERFLOW 6-The Function StackTHE PROCESSOR’S STACK FRAME LAYOUT处理器的栈帧布局 文章的简单翻译 一个典型的栈帧布局如下所示，在不同的操作系统中它可能会有不同的组织方式： ![栈结构](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typ">
+  <meta name="description" content="BUFFER OVERFLOW 6-The Function StackTHE PROCESSOR’S STACK FRAME LAYOUT处理器的栈帧布局 文章的简单翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="函数栈">
 <meta property="og:url" content="http://example.com/2021/09/21/BO6-%E5%87%BD%E6%95%B0%E6%A0%88/index.html">
 <meta property="og:site_name" content="PlayDumb">
-<meta property="og:description" content="BUFFER OVERFLOW 6-The Function StackTHE PROCESSOR’S STACK FRAME LAYOUT处理器的栈帧布局 文章的简单翻译 一个典型的栈帧布局如下所示，在不同的操作系统中它可能会有不同的组织方式： ![栈结构](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typ">
+<meta property="og:description" content="BUFFER OVERFLOW 6-The Function StackTHE PROCESSOR’S STACK FRAME LAYOUT处理器的栈帧布局 文章的简单翻译">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow2_files/image011.png">
 <meta property="article:published_time" content="2021-09-20T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-08-17T02:22:18.574Z">
+<meta property="article:modified_time" content="2022-08-17T03:53:46.950Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
@@ -103,6 +103,8 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h1 id="BUFFER-OVERFLOW-6-The-Function-Stack"><a href="#BUFFER-OVERFLOW-6-The-Function-Stack" class="headerlink" title="BUFFER OVERFLOW 6-The Function Stack"></a>BUFFER OVERFLOW 6-The Function Stack</h1><h2 id="THE-PROCESSOR’S-STACK-FRAME-LAYOUT"><a href="#THE-PROCESSOR’S-STACK-FRAME-LAYOUT" class="headerlink" title="THE PROCESSOR’S STACK FRAME LAYOUT"></a>THE PROCESSOR’S STACK FRAME LAYOUT</h2><p><a target="_blank" rel="noopener" href="https://www.tenouk.com/Bufferoverflowc/Bufferoverflow2a.html">处理器的栈帧布局</a> 文章的简单翻译</p>
+<span id="more"></span>
+
 <p>一个典型的栈帧布局如下所示，在不同的操作系统中它可能会有不同的组织方式：</p>
 <p>![栈结构](&#x2F;Users&#x2F;brian&#x2F;Library&#x2F;Application Support&#x2F;typora-user-images&#x2F;image-20210917173403227.png)</p>
 <p>​									图1:一个函数调用的典型栈布局结构</p>
